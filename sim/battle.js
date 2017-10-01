@@ -77,6 +77,8 @@ const Pokemon = require('./pokemon');
  */
 /** @typedef {MoveAction | SwitchAction | TeamAction | FieldAction | PokemonAction} Action */
 
+const toId = Dex.getId;
+
 class Battle extends Dex.ModdedDex {
 	/**
 	 * @param {string} formatid
@@ -388,8 +390,9 @@ class Battle extends Dex.ModdedDex {
 	 * @param {string | Effect} status
 	 */
 	getPseudoWeather(status) {
-		status = this.getEffect(status);
-		if (!this.pseudoWeather[status.id]) return null;
+		//status = this.getEffect(status);
+		const statusid = toId(status);
+		if (!this.pseudoWeather[statusid]) return null;
 		return status;
 	}
 
