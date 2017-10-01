@@ -102,6 +102,21 @@ class ModdedDex {
 	 * @param {boolean} [isOriginal]
 	 */
 	constructor(mod = 'base', isOriginal = false) {
+	    /*
+this.counts = {
+    Statuses: 0,
+    Movedex: 0,
+    Abilities: 0,
+    Items: 0,
+    Formats: 0,
+    recoil: 0,
+    drain: 0,
+    solarbeam: 0,
+};
+this.countss = 0;
+*/
+this.effectCache = {};
+
 		/** @type {number} */
 		this.gen = 0;
 
@@ -460,35 +475,53 @@ class ModdedDex {
 			return this.getAbility(name.slice(8));
 		}
 		let id = toId(name);
+		if (this.effectCache.hasOwnProperty(id)) {
+		    return this.effectCache[id];
+		}
 		if (!id || id === 'jolteon' || id === 'paras') {
 			// HACK(strager): I think we should throw instead...
 			return Data.effectDoesNotExist;
 		}
 		let effect;
 		if (id && this.data.Statuses.hasOwnProperty(id)) {
+			//this.counts['Statuses'] += 1;
 			effect = new Data.PureEffect({name}, this.data.Statuses[id]);
+			this.effectCache[id] = effect;
 		} else if (id && this.data.Movedex.hasOwnProperty(id) && this.data.Movedex[id].effect) {
+			//this.counts['Movedex'] += 1;
 			name = this.data.Movedex[id].name || name;
 			effect = new Data.PureEffect({name}, this.data.Movedex[id].effect);
 		} else if (id && this.data.Abilities.hasOwnProperty(id) && this.data.Abilities[id].effect) {
+			//this.counts['Abilities'] += 1;
 			name = this.data.Abilities[id].name || name;
 			effect = new Data.PureEffect({name}, this.data.Abilities[id].effect);
 		} else if (id && this.data.Items.hasOwnProperty(id) && this.data.Items[id].effect) {
+			//this.counts['Items'] += 1;
 			name = this.data.Items[id].name || name;
 			effect = new Data.PureEffect({name}, this.data.Items[id].effect);
 		} else if (id && this.data.Formats.hasOwnProperty(id)) {
+			//this.counts['Formats'] += 1;
 			effect = new Data.Format({name}, this.data.Formats[id]);
 		} else if (id === 'recoil') {
+			//this.counts['recoil'] += 1;
 			effect = new Data.PureEffect({name: 'Recoil', effectType: 'Recoil'});
 		} else if (id === 'drain') {
+			//this.counts['drain'] += 1;
 			effect = new Data.PureEffect({name: 'Drain', effectType: 'Drain'});
 		} else if (id === 'solarbeam') {
+			//this.counts['solarbeam'] += 1;
 			// HACK(strager)
 			effect = new Data.PureEffect({name, exists: false});
 		} else {
 			throw new Error('What is ' + name + '?');
 			effect = new Data.PureEffect({name, exists: false});
 		}
+		/*
+		this.countss += 1;
+		if (this.countss % 10000) {
+		    console.log(this.counts);
+		}
+		*/
 		return effect;
 	}
 	/**
@@ -586,7 +619,7 @@ class ModdedDex {
 			item = new Data.Item({name, exists: false});
 		}
 
-		if (item.exists) this.itemCache.set(id, item);
+		this.itemCache.set(id, item);
 		return item;
 	}
 	/**
@@ -613,7 +646,7 @@ class ModdedDex {
 			ability = new Data.Ability({name, exists: false});
 		}
 
-		if (ability.exists) this.abilityCache.set(id, ability);
+		this.abilityCache.set(id, ability);
 		return ability;
 	}
 	/**
@@ -1504,6 +1537,7 @@ class ModdedDex {
 			// @ts-ignore
 			if (dexes['base'].dataCache) dexes['base'].dataCache.Formats[id] = format;
 		}
+		this.effectCache = {};
 	}
 }
 
