@@ -1340,6 +1340,7 @@ class Pokemon {
 			return result;
 		}
 		this.volatiles[status.id] = {id: status.id};
+		this.volatiles[status.id].effect = status;
 		this.volatiles[status.id].target = this;
 		if (source) {
 			this.volatiles[status.id].source = source;
@@ -1377,10 +1378,15 @@ class Pokemon {
 	/**
 	 * @param {string | Effect} status
 	 */
-	getVolatile(status) {
-		status = this.battle.getEffect(status);
-		if (!this.volatiles[status.id]) return null;
-		return status;
+	getVolatile(statusid) {
+		if (typeof statusid !== 'string') {
+			throw new TypeError('TODO');
+		}
+		const status = this.volatiles[statusid];
+		if (!status) {
+			return null;
+		}
+		return status.effect;
 	}
 
 	/**
