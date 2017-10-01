@@ -6,6 +6,8 @@
  */
 'use strict';
 
+const nonIdCharacterRegExp = /[^a-z0-9]+/g;
+
 class Tools {
 	/**
 	 * Safely converts the passed variable into a string. Unlike '' + str,
@@ -50,7 +52,7 @@ class Tools {
 			text = text.userid;
 		}
 		if (typeof text !== 'string' && typeof text !== 'number') return '';
-		return ('' + text).toLowerCase().replace(/[^a-z0-9]+/g, '');
+		return ('' + text).toLowerCase().replace(nonIdCharacterRegExp, '');
 	}
 }
 const toId = Tools.getId;
