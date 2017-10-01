@@ -1392,14 +1392,19 @@ class Pokemon {
 	/**
 	 * @param {string | Effect} status
 	 */
-	removeVolatile(status) {
+	removeVolatile(statusid) {
 		if (!this.hp) return false;
-		status = this.battle.getEffect(status);
-		if (!this.volatiles[status.id]) return false;
-		this.battle.singleEvent('End', status, this.volatiles[status.id], this);
-		let linkedPokemon = this.volatiles[status.id].linkedPokemon;
-		let linkedStatus = this.volatiles[status.id].linkedStatus;
-		delete this.volatiles[status.id];
+		if (typeof statusid !== 'string') {
+			throw new TypeError('TODO');
+		}
+		const status = this.volatiles[statusid];
+		if (!status) {
+			return false;
+		}
+		this.battle.singleEvent('End', status.effect, status, this);
+		let linkedPokemon = this.volatiles[statusid].linkedPokemon;
+		let linkedStatus = this.volatiles[statusid].linkedStatus;
+		delete this.volatiles[statusid];
 		if (linkedPokemon) {
 			this.removeLinkedVolatiles(linkedStatus, linkedPokemon);
 		}

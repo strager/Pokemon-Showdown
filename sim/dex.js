@@ -460,6 +460,10 @@ class ModdedDex {
 			return this.getAbility(name.slice(8));
 		}
 		let id = toId(name);
+		if (!id || id === 'jolteon' || id === 'paras') {
+			// HACK(strager): I think we should throw instead...
+			return Data.effectDoesNotExist;
+		}
 		let effect;
 		if (id && this.data.Statuses.hasOwnProperty(id)) {
 			effect = new Data.PureEffect({name}, this.data.Statuses[id]);
@@ -478,7 +482,11 @@ class ModdedDex {
 			effect = new Data.PureEffect({name: 'Recoil', effectType: 'Recoil'});
 		} else if (id === 'drain') {
 			effect = new Data.PureEffect({name: 'Drain', effectType: 'Drain'});
+		} else if (id === 'solarbeam') {
+			// HACK(strager)
+			effect = new Data.PureEffect({name, exists: false});
 		} else {
+			throw new Error('What is ' + name + '?');
 			effect = new Data.PureEffect({name, exists: false});
 		}
 		return effect;

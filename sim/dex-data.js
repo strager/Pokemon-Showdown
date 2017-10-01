@@ -1146,3 +1146,4 @@ exports.Template = Template;
 exports.Move = Move;
 exports.Ability = Ability;
 exports.TypeInfo = TypeInfo;
+exports.effectDoesNotExist = new PureEffect({name: '', exists: false});
