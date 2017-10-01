@@ -478,10 +478,6 @@ this.effectCache = {};
 		if (this.effectCache.hasOwnProperty(id)) {
 		    return this.effectCache[id];
 		}
-		if (!id || id === 'jolteon' || id === 'paras') {
-			// HACK(strager): I think we should throw instead...
-			return Data.effectDoesNotExist;
-		}
 		let effect;
 		if (id && this.data.Statuses.hasOwnProperty(id)) {
 			//this.counts['Statuses'] += 1;
@@ -508,13 +504,9 @@ this.effectCache = {};
 		} else if (id === 'drain') {
 			//this.counts['drain'] += 1;
 			effect = new Data.PureEffect({name: 'Drain', effectType: 'Drain'});
-		} else if (id === 'solarbeam') {
-			//this.counts['solarbeam'] += 1;
-			// HACK(strager)
-			effect = new Data.PureEffect({name, exists: false});
 		} else {
-			throw new Error('What is ' + name + '?');
 			effect = new Data.PureEffect({name, exists: false});
+			this.effectCache[id] = effect;
 		}
 		/*
 		this.countss += 1;
