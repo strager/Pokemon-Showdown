@@ -1077,6 +1077,7 @@ class Battle extends Dex.ModdedDex {
 			statuses.push({status: item, callback: item[callbackType], statusData: thing.itemData, end: thing.clearItem, thing: thing});
 			this.resolveLastPriority(statuses, callbackType);
 		}
+/*
 		let baseSpecies = this.getEffect(thing.template.baseSpecies);
 		// @ts-ignore
 		if (baseSpecies[callbackType] !== undefined) {
@@ -1084,6 +1085,7 @@ class Battle extends Dex.ModdedDex {
 			statuses.push({status: baseSpecies, callback: baseSpecies[callbackType], statusData: thing.speciesData, end: function () {}, thing: thing});
 			this.resolveLastPriority(statuses, callbackType);
 		}
+*/
 
 		if (foeThing && foeCallbackType && foeCallbackType.substr(0, 8) !== 'onSource') {
 			statuses = statuses.concat(this.getRelevantEffectsInner(foeThing, foeCallbackType, null, null, false, false, getAll));
