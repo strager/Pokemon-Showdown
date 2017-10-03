@@ -100,7 +100,7 @@ class Battle extends Dex.ModdedDex {
 		/**@type {AnyObject} */
 		this.weatherData = {id: ''};
 		/**@type {AnyObject} */
-		this.terrainData = {id: ''};
+		this.terrainData = {id: '', effect: null};
 		this.pseudoWeather = {};
 
 		this.format = format.id;
@@ -299,7 +299,7 @@ class Battle extends Dex.ModdedDex {
 		let prevTerrain = this.terrain;
 		let prevTerrainData = this.terrainData;
 		this.terrain = status.id;
-		this.terrainData = {id: status.id};
+		this.terrainData = {id: status.id, effect: status};
 		if (source) {
 			this.terrainData.source = source;
 			this.terrainData.sourcePosition = source.position;
@@ -346,7 +346,10 @@ class Battle extends Dex.ModdedDex {
 	}
 
 	getTerrain() {
-		return this.getEffect(this.terrain);
+		if (this.terrainData.effect === null) {
+			this.terrainData.effect = this.getEffect(this.terrain);
+		}
+		return this.terrainData.effect;
 	}
 
 	/**
