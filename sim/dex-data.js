@@ -6,8 +6,6 @@
  */
 'use strict';
 
-const nonIdCharacterRegExp = /[^a-z0-9]+/g;
-
 class Tools {
 	/**
 	 * Safely converts the passed variable into a string. Unlike '' + str,
@@ -51,8 +49,23 @@ class Tools {
 		} else if (text && text.userid) {
 			text = text.userid;
 		}
-		if (typeof text !== 'string' && typeof text !== 'number') return '';
-		return ('' + text).toLowerCase().replace(nonIdCharacterRegExp, '');
+		if (typeof text === 'string') {
+		} else if (typeof text === 'number') {
+			text = '' + text;
+		} else {
+			return '';
+		}
+		let id = '';
+		const textLength = text.length;
+		for (let i = 0; i < textLength; ++i) {
+			const c = text.charCodeAt(i);
+			if ((0x30 <= c && c <= 0x39) || (0x61 <= c && c <= 0x7A)) {
+			    id += String.fromCharCode(c);
+			} else if (0x41 <= c && c <= 0x5A) {
+			    id += String.fromCharCode(c + 0x20);
+			}
+		}
+		return id;
 	}
 }
 const toId = Tools.getId;
