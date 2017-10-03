@@ -138,6 +138,7 @@ class Pokemon {
 
 		this.baseAbility = toId(set.ability);
 		this.ability = this.baseAbility;
+		this.abilityObject = null; // Cache of this.battle.getAbility(this.ability).
 		this.item = toId(set.item);
 		this.abilityData = {id: this.ability};
 		this.itemData = {id: this.item};
@@ -871,6 +872,7 @@ class Pokemon {
 
 		this.transformed = false;
 		this.ability = this.baseAbility;
+		this.abilityObject = null;
 		this.set.ivs = this.baseIvs;
 		this.hpType = this.baseHpType;
 		this.hpPower = this.baseHpPower;
@@ -1284,6 +1286,7 @@ class Pokemon {
 			this.battle.add('-endability', this, this.battle.getAbility(oldAbility), '[from] move: ' + this.battle.getMove(this.battle.effect.id));
 		}
 		this.ability = ability.id;
+		this.abilityObject = ability;
 		this.abilityData = {id: ability.id, target: this};
 		if (ability.id && this.battle.gen > 3) {
 			this.battle.singleEvent('Start', ability, this.abilityData, this, source);
@@ -1293,7 +1296,10 @@ class Pokemon {
 	}
 
 	getAbility() {
-		return this.battle.getAbility(this.ability);
+		if (this.abilityObject === null) {
+			this.abilityObject = this.battle.getAbility(this.ability);
+		}
+		return this.abilityObject;
 	}
 
 	/**
