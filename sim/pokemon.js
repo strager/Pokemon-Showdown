@@ -78,6 +78,7 @@ class Pokemon {
 		this.ateBerry = false;
 		/**@type {string} */
 		this.status = '';
+		this.statusEffect = null; // Cache of this.battle.getEffect(this.status).
 		this.position = 0;
 
 		/**
@@ -1088,6 +1089,7 @@ class Pokemon {
 			}
 		}
 		let prevStatus = this.status;
+		let prevStatusEffect = this.statusEffect;
 		let prevStatusData = this.statusData;
 		if (status.id) {
 			let result = this.battle.runEvent('SetStatus', this, source, sourceEffect, status);
@@ -1098,6 +1100,7 @@ class Pokemon {
 		}
 
 		this.status = status.id;
+		this.statusEffect = status;
 		this.statusData = {id: status.id, target: this};
 		if (source) this.statusData.source = source;
 		if (status.duration) {
@@ -1111,6 +1114,7 @@ class Pokemon {
 			this.battle.debug('status start [' + status.id + '] interrupted');
 			// cancel the setstatus
 			this.status = prevStatus;
+			this.statusEffect = prevStatusEffect;
 			this.statusData = prevStatusData;
 			return false;
 		}
@@ -1128,7 +1132,10 @@ class Pokemon {
 	}
 
 	getStatus() {
-		return this.battle.getEffect(this.status);
+		if (this.statusEffect === null) {
+			this.statusEffect = this.battle.getEffect(this.status);
+		}
+		return this.statusEffect;
 	}
 
 	/**
