@@ -10,7 +10,6 @@ exports.BattleScripts = {
 	pokemon: {
 		// Stadium shares gen 1 code but it fixes some problems with it.
 		getStat: function (statName, unmodified) {
-			statName = toId(statName);
 			if (statName === 'hp') return this.maxhp;
 			if (unmodified) return this.stats[statName];
 			return this.modifiedStats[statName];
