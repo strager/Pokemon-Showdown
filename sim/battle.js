@@ -368,7 +368,7 @@ class Battle extends Dex.ModdedDex {
 			if (!status.onRestart) return false;
 			return this.singleEvent('Restart', status, this.pseudoWeather[status.id], this, source, sourceEffect);
 		}
-		this.pseudoWeather[status.id] = {id: status.id};
+		this.pseudoWeather[status.id] = {id: status.id, effect: status};
 		if (source) {
 			this.pseudoWeather[status.id].source = source;
 			this.pseudoWeather[status.id].sourcePosition = source.position;
@@ -389,11 +389,10 @@ class Battle extends Dex.ModdedDex {
 	/**
 	 * @param {string | Effect} status
 	 */
-	getPseudoWeather(status) {
-		//status = this.getEffect(status);
-		const statusid = toId(status);
-		if (!this.pseudoWeather[statusid]) return null;
-		return status;
+	getPseudoWeather(statusid) {
+		const status = this.pseudoWeather[statusid];
+		if (!status) return null;
+		return status.effect;
 	}
 
 	/**
