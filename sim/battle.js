@@ -98,7 +98,7 @@ class Battle extends Dex.ModdedDex {
 		this.sides = [null, null];
 		this.rated = rated;
 		/**@type {AnyObject} */
-		this.weatherData = {id: ''};
+		this.weatherData = {id: '', effect: null};
 		/**@type {AnyObject} */
 		this.terrainData = {id: '', effect: null};
 		this.pseudoWeather = {};
@@ -238,7 +238,7 @@ class Battle extends Dex.ModdedDex {
 		let prevWeather = this.weather;
 		let prevWeatherData = this.weatherData;
 		this.weather = status.id;
-		this.weatherData = {id: status.id};
+		this.weatherData = {id: status.id, effect: status};
 		if (source) {
 			this.weatherData.source = source;
 			this.weatherData.sourcePosition = source.position;
@@ -278,7 +278,10 @@ class Battle extends Dex.ModdedDex {
 	}
 
 	getWeather() {
-		return this.getEffect(this.weather);
+		if (this.weatherData.effect === null) {
+			this.weatherData.effect = this.getEffect(this.weather);
+		}
+		return this.weatherData.effect;
 	}
 
 	/**
