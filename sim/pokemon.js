@@ -140,6 +140,7 @@ class Pokemon {
 		this.ability = this.baseAbility;
 		this.abilityObject = null; // Cache of this.battle.getAbility(this.ability).
 		this.item = toId(set.item);
+		this.itemObject = null; // Cache of this.battle.getItem(this.item).
 		this.abilityData = {id: this.ability};
 		this.itemData = {id: this.item};
 		this.speciesData = {id: this.speciesid};
@@ -1159,6 +1160,7 @@ class Pokemon {
 
 			this.lastItem = this.item;
 			this.item = '';
+			this.itemObject = null;
 			this.itemData = {id: '', target: this};
 			this.usedItemThisTurn = true;
 			this.ateBerry = true;
@@ -1195,6 +1197,7 @@ class Pokemon {
 
 			this.lastItem = this.item;
 			this.item = '';
+			this.itemObject = null;
 			this.itemData = {id: '', target: this};
 			this.usedItemThisTurn = true;
 			this.battle.runEvent('AfterUseItem', this, null, null, item);
@@ -1217,6 +1220,7 @@ class Pokemon {
 		let item = this.getItem();
 		if (this.battle.runEvent('TakeItem', this, source, null, item)) {
 			this.item = '';
+			this.itemObject = null;
 			this.itemData = {id: '', target: this};
 			return item;
 		}
@@ -1240,6 +1244,7 @@ class Pokemon {
 		}
 		this.lastItem = this.item;
 		this.item = item.id;
+		this.itemObject = item;
 		this.itemData = {id: item.id, target: this};
 		if (item.id) {
 			this.battle.singleEvent('Start', item, this.itemData, this, source, effect);
@@ -1249,7 +1254,10 @@ class Pokemon {
 	}
 
 	getItem() {
-		return this.battle.getItem(this.item);
+		if (this.itemObject === null) {
+			this.itemObject = this.battle.getItem(this.item);
+		}
+		return this.itemObject;
 	}
 
 	/**
