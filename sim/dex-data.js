@@ -57,12 +57,21 @@ class Tools {
 		}
 		let id = '';
 		const textLength = text.length;
-		for (let i = 0; i < textLength; ++i) {
-			const c = text.charCodeAt(i);
+		let i = 0;
+		while (i < textLength) {
+			let c = text.charCodeAt(i);
 			if ((0x30 <= c && c <= 0x39) || (0x61 <= c && c <= 0x7A)) {
-			    id += String.fromCharCode(c);
+				const begin = i;
+				do {
+					++i;
+					c = text.charCodeAt(i);
+				} while ((0x30 <= c && c <= 0x39) || (0x61 <= c && c <= 0x7A));
+				id += text.substring(begin, i);
 			} else if (0x41 <= c && c <= 0x5A) {
 			    id += String.fromCharCode(c + 0x20);
+			    ++i;
+			} else {
+			    ++i;
 			}
 		}
 		return id;
