@@ -294,7 +294,7 @@ exports.BattleScripts = {
 		if (move.target === 'self' && accuracy !== true) accuracy++;
 
 		// 1/256 chance of missing always, no matter what. Besides the aforementioned exceptions.
-		if (accuracy !== true && this.random(256) >= accuracy) {
+		if (accuracy !== true && !this.flipCoin(accuracy, 256)) {
 			this.attrLastMove('[miss]');
 			this.add('-miss', pokemon);
 			damage = false;
@@ -834,7 +834,7 @@ exports.BattleScripts = {
 			// We compare our critical hit chance against a random number between 0 and 255.
 			// If the random number is lower, we get a critical hit. This means there is always a 1/255 chance of not hitting critically.
 			if (critChance > 0) {
-				move.crit = (this.random(256) < critChance);
+				move.crit = this.flipCoin(critChance, 256);
 			}
 		}
 
