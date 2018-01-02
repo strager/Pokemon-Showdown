@@ -9,6 +9,8 @@
 
 'use strict';
 
+const Dex = require('./dex');
+
 /**
  * Keeps track of how a pokemon with a given set might be obtained.
  *

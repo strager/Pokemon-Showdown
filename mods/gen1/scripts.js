@@ -1,5 +1,7 @@
 'use strict';
 
+const toId = require('../../sim/dex').getId;
+
 /**
  * Gen 1 mechanics are fairly different to those we know on current gen.
  * Therefor we need to make a lot of changes to the battle engine for this game simulation.
