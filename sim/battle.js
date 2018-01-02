@@ -185,6 +185,14 @@ class Battle extends Dex.ModdedDex {
 		return this.prng.next(m, n);
 	}
 
+	/**
+	 * @param {number} numerator
+	 * @param {number} denominator
+	 */
+	flipCoin(numerator, denominator) {
+		return this.prng.flipCoin(numerator, denominator);
+	}
+
 	resetRNG() {
 		this.prng = new PRNG(this.prng.startingSeed);
 	}
