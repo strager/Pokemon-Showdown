@@ -6,6 +6,9 @@
  */
 'use strict';
 
+const Dex = require('./dex');
+const toId = Dex.getId;
+
 /**
  * An object representing a Pokemon's move
  *
