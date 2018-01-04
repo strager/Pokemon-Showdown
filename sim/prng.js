@@ -81,6 +81,20 @@ class PRNG {
 	}
 
 	/**
+	 * Flip a coin (two-sided die), returning true or false.
+	 *
+	 * This function returns true with probability `P`, where `P = numerator
+	 * / denominator`. This function returns false with probability `1 - P`.
+	 *
+	 * @param {number} numerator - the top part of the probability fraction
+	 * @param {number} denominator - the bottom part of the probability fraction
+	 * @return {boolean} - randomly true or false
+	 */
+	flipCoin(numerator, denominator) {
+		return this.next(denominator) < numerator;
+	}
+
+	/**
 		The RNG is a Linear Congruential Generator (LCG) in the form: `x_{n + 1} = (a x_n + c) % m`
 
 		Where: `x_0` is the seed, `x_n` is the random number after n iterations,
