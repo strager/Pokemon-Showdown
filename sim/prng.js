@@ -95,6 +95,34 @@ class PRNG {
 	}
 
 	/**
+	 * Pick a random array element with a non-uniform distribution.
+	 *
+	 * This function returns index `i` with probability `weights[i] / sum`,
+	 * where `sum` is the total of all the weights.
+	 *
+	 * `nextRandomWeightedIndex([1, 1]) === 0` is equivalent to `flipCoin(1,
+	 * 2)`.
+	 *
+	 * @param {number[]} weights - how likely each number will be chosen
+	 * @return {number} - the index of the chosen weight
+	 */
+	nextRandomWeightedIndex(weights) {
+		let sum = 0;
+		for (let i = 0; i < weights.length; ++i) {
+			sum += weights[i];
+		}
+		const randomNumber = this.next(sum);
+		let tmp = 0;
+		for (let i = 0; i < weights.length; ++i) {
+			tmp += weights[i];
+			if (randomNumber < tmp) {
+				return i;
+			}
+		}
+		throw new Error('Failed to determine weighted random number');
+	}
+
+	/**
 		The RNG is a Linear Congruential Generator (LCG) in the form: `x_{n + 1} = (a x_n + c) % m`
 
 		Where: `x_0` is the seed, `x_n` is the random number after n iterations,
