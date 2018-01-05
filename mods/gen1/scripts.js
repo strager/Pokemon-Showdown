@@ -942,8 +942,19 @@ exports.BattleScripts = {
 
 		// Apply random factor is damage is greater than 1
 		if (damage > 1) {
-			damage *= this.random(217, 256);
-			damage = Math.floor(damage / 255);
+			const weightByDamage = new Map();
+			for (let r = 217; r <= 255; ++r) {
+				const d = Math.floor(damage * r / 255);
+				let curWeight = weightByDamage.get(d);
+				if (curWeight === undefined) {
+					curWeight = 0;
+				}
+				weightByDamage.set(d, curWeight + 1);
+			}
+			const weights = Array.from(weightByDamage.values());
+			const damageByWeightIndex = Array.from(weightByDamage.keys());
+			const index = this.prng.nextRandomWeightedIndex(weights);
+			damage = damageByWeightIndex[index];
 			if (damage > target.hp && !target.volatiles['substitute']) damage = target.hp;
 			if (target.volatiles['substitute'] && damage > target.volatiles['substitute'].hp) damage = target.volatiles['substitute'].hp;
 		}
