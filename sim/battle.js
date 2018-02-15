@@ -499,7 +499,9 @@ class Battle extends Dex.ModdedDex {
 		if (b.subOrder - a.subOrder) {
 			return -(b.subOrder - a.subOrder);
 		}
-		return this.random() - 0.5;
+                // FIXME(strager): Using the PRNG in
+                // Array#sort's function is wrong!
+		return this.flipCoin(1, 2) ? -1 : 1;
 	}
 
 	/**
@@ -552,7 +554,7 @@ class Battle extends Dex.ModdedDex {
 			if (b.speed - a.speed) {
 				return b.speed - a.speed;
 			}
-			return this.random() - 0.5;
+			return this.flipCoin(1, 2) ? -1 : 1;
 		});
 		for (let i = 0; i < actives.length; i++) {
 			this.runEvent(eventid, actives[i], null, effect, relayVar);
