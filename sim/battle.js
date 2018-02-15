@@ -12,6 +12,7 @@ const Data = require('./dex-data');
 const PRNG = require('./prng');
 const Side = require('./side');
 const Pokemon = require('./pokemon');
+const array = require('../lib/array');
 
 /**
  * An object representing a Pokemon that has fainted
@@ -493,7 +494,7 @@ class Battle extends Dex.ModdedDex {
 	 * @param {AnyObject} a
 	 * @param {AnyObject} b
 	 */
-	comparePriority(a, b) {
+	static comparePriority(a, b) {
 		a.priority = a.priority || 0;
 		a.subPriority = a.subPriority || 0;
 		a.speed = a.speed || 0;
@@ -520,7 +521,7 @@ class Battle extends Dex.ModdedDex {
 		if (b.subOrder - a.subOrder) {
 			return -(b.subOrder - a.subOrder);
 		}
-		return this.random() - 0.5;
+		return 0;
 	}
 
 	/**
@@ -550,7 +551,8 @@ class Battle extends Dex.ModdedDex {
 	 */
 	getResidualStatuses(thing, callbackType) {
 		let statuses = this.getRelevantEffectsInner(thing || this, callbackType || 'residualCallback', null, null, false, true, 'duration');
-		statuses.sort((a, b) => this.comparePriority(a, b));
+		// @nocommit needs to change?
+		statuses.sort((a, b) => Battle.comparePriority(a, b));
 		//if (statuses[0]) this.debug('match ' + (callbackType || 'residualCallback') + ': ' + statuses[0].status.id);
 		return statuses;
 	}
@@ -573,7 +575,9 @@ class Battle extends Dex.ModdedDex {
 			if (b.speed - a.speed) {
 				return b.speed - a.speed;
 			}
-			return this.random() - 0.5;
+                        // @nocommit
+			//return this.random() - 0.5;
+			return 0;
 		});
 		for (let i = 0; i < actives.length; i++) {
 			this.runEvent(eventid, actives[i], null, effect, relayVar);
@@ -590,7 +594,8 @@ class Battle extends Dex.ModdedDex {
 	 */
 	residualEvent(eventid, relayVar) {
 		let statuses = this.getRelevantEffectsInner(this, 'on' + eventid, null, null, false, true, 'duration');
-		statuses.sort((a, b) => this.comparePriority(a, b));
+		// @nocommit needs to change?
+		statuses.sort((a, b) => Battle.comparePriority(a, b));
 		while (statuses.length) {
 			let statusObj = statuses[0];
 			statuses.shift();
@@ -811,7 +816,8 @@ class Battle extends Dex.ModdedDex {
 		if (fastExit) {
 			statuses.sort(Battle.compareRedirectOrder);
 		} else {
-			statuses.sort((a, b) => this.comparePriority(a, b));
+			// @nocommit needs to change?
+			statuses.sort((a, b) => Battle.comparePriority(a, b));
 		}
 		let hasRelayVar = true;
 		effect = this.getEffect(effect);
@@ -2672,8 +2678,20 @@ class Battle extends Dex.ModdedDex {
 		this.queue.push(this.resolveAction(action));
 	}
 
+	/**
+	 * @param {ReadonlyArray<T>} items
+	 * @return {Array<T>}
+	 * @template T
+	 */
+	sortedByPriority(items) {
+		return array.sortedWithTieBreaker(items, Battle.comparePriority, (group) => this.prng.shuffled(group));
+	}
+
 	sortQueue() {
-		this.queue.sort((a, b) => this.comparePriority(a, b));
+		// @nocommit needs to change?
+		// @nocommit is it safe to not mutate the original array?
+		this.queue = this.sortedByPriority(this.queue);
+		//this.queue.sort((a, b) => Battle.comparePriority(a, b));
 	}
 
 	/**
@@ -2695,7 +2713,9 @@ class Battle extends Dex.ModdedDex {
 		if (chosenAction.pokemon) chosenAction.pokemon.updateSpeed();
 		const action = this.resolveAction(chosenAction, midTurn);
 		for (let i = 0; i < this.queue.length; i++) {
-			if (this.comparePriority(action, this.queue[i]) < 0) {
+			// @nocommit how do we deal with speed ties here?
+			// @nocommit needs to change?
+			if (Battle.comparePriority(action, this.queue[i]) < 0) {
 				this.queue.splice(i, 0, action);
 				return;
 			}

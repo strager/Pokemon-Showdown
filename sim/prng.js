@@ -79,6 +79,22 @@ class PRNG {
 	}
 
 	/**
+	 * @param {ReadonlyArray<T>} items
+	 * @return {Array<T>}
+	 * @template T
+	 */
+	shuffled(items) {
+		const remainingItems = items.slice();
+		const shuffledItems = [];
+		while (remainingItems.length > 0) {
+			const index = this.next(remainingItems.length);
+			shuffledItems.push(remainingItems[index]);
+			remainingItems.splice(index, 1);
+		}
+		return shuffledItems;
+	}
+
+	/**
 		The RNG is a Linear Congruential Generator (LCG) in the form: `x_{n + 1} = (a x_n + c) % m`
 
 		Where: `x_0` is the seed, `x_n` is the random number after n iterations,
