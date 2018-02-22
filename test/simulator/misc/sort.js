@@ -8,11 +8,25 @@ function compareNumbers(x, y) {
 	return 0;
 }
 
+function groupAdjacent(items, itemsEqual) {
+	const groups = [];
+	for (const item of items) {
+		if (groups.length > 0 && itemsEqual(item, groups[groups.length - 1][0])) {
+			groups[groups.length - 1].push(item);
+		} else {
+			groups.push([item]);
+		}
+	}
+	return groups;
+}
+
 function sorted(items, getKey, compareKeys) {
 	// @nocommit test that original is not mutated
-	return items.sort((x, y) => {
+	const sortedItems = items;
+	sortedItems.sort((x, y) => {
 		return compareKeys(getKey(x), getKey(y));
-	}).map((x) => [x]);
+	});
+	return groupAdjacent(sortedItems, (x, y) => compareKeys(getKey(x), getKey(y)) === 0);
 }
 
 function flatten(itemGroups) {
@@ -69,7 +83,7 @@ describe("sorted", function () {
 				assert.deepStrictEqual(flatten(output), ['hello', 'harry']);
 			});
 			it("should sort by into one group containing both items", function () {
-				assert.deepStrictEqual(output.length, [['hello', 'harry']]);
+				assert.deepStrictEqual(output, [['hello', 'harry']]);
 			});
 		});
 		describe("sort by string length", function () {
@@ -78,7 +92,7 @@ describe("sorted", function () {
 				assert.deepStrictEqual(flatten(output), ['hello', 'harry']);
 			});
 			it("should sort by into one group containing both items", function () {
-				assert.deepStrictEqual(output.length, [['hello', 'harry']]);
+				assert.deepStrictEqual(output, [['hello', 'harry']]);
 			});
 		});
 	});
