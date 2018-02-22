@@ -4,24 +4,14 @@ const assert = require('./../../assert');
 const PRNG = require('./../../../sim/prng');
 
 function shuffle(items, prng) {
-	// @nocommit test that original is not mutated
-	if (items.length === 3) {
-		const shuffledItems = [];
-		const index = prng.next(3)
-		shuffledItems.push(items[index]);
-		const index2 = prng.next(2)
-		shuffledItems.push(items[(index + index2 + 1) % 3]);
-		shuffledItems.push(items[(index + (1 - index2) + 1) % 3]);
-		return shuffledItems;
+	const remainingItems = items.slice();
+	const shuffledItems = [];
+	while (remainingItems.length > 0) {
+		const index = prng.next(remainingItems.length);
+		shuffledItems.push(remainingItems[index]);
+		remainingItems.splice(index, 1);
 	}
-	if (items.length === 2) {
-		const shuffledItems = [];
-		const index = prng.next(2)
-		shuffledItems.push(items[index]);
-		shuffledItems.push(items[1 - index]);
-		return shuffledItems;
-	}
-	return items.slice();
+	return shuffledItems;
 }
 
 describe("shuffle", function () {
@@ -95,6 +85,14 @@ describe("shuffle", function () {
 			assert.bounded(sampleCountBySecondItem['a'], [293, 373], `the shuffled array's second item should match the input array's first item 33% of the time`);
 			assert.bounded(sampleCountBySecondItem['b'], [293, 373], `the shuffled array's second item should match the input array's second item 33% of the time`);
 			assert.bounded(sampleCountBySecondItem['c'], [293, 373], `the shuffled array's second item should match the input array's third item 33% of the time`);
+		});
+	});
+	describe("many-item input with mixed types", function () {
+		it("should not mutate the input", function () {
+			const input = [1, 3, 'x', 2, 'asdf', 'qwerty', null, undefined];
+			const prng = new PRNG([0, 0, 0, 0]);
+			const output = shuffle(input, prng);
+			assert.deepStrictEqual(input, [1, 3, 'x', 2, 'asdf', 'qwerty', null, undefined]);
 		});
 	});
 });
