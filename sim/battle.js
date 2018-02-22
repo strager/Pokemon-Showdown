@@ -12,6 +12,7 @@ const Data = require('./dex-data');
 const PRNG = require('./prng');
 const Side = require('./side');
 const Pokemon = require('./pokemon');
+const sorted = require('../lib/sort').sorted;
 
 // @nocommit move
 function flatten(itemGroups) {
@@ -2680,16 +2681,18 @@ class Battle extends Dex.ModdedDex {
 		this.queue.push(this.resolveAction(action));
 	}
 
-	static sortedByPriority(items) {
+	sortedByPriority(items) {
 		// @nocommit kill need for identity
-		const groupedItems = sorted(statuses, (x) => x, Battle.comparePriority);
-		const groupedItemsWithTiesBroken = groupedItems.map((group) => this.random.shuffled(group));
+		const groupedItems = sorted(items, (x) => x, Battle.comparePriority);
+		const groupedItemsWithTiesBroken = groupedItems.map((group) => this.prng.shuffled(group));
 		return flatten(groupedItemsWithTiesBroken);
 	}
 
 	sortQueue() {
 		// @nocommit needs to change?
-		this.queue.sort((a, b) => Battle.comparePriority(a, b));
+		// @nocommit is it safe to not mutate the original array?
+		this.queue = this.sortedByPriority(this.queue);
+		//this.queue.sort((a, b) => Battle.comparePriority(a, b));
 	}
 
 	/**
