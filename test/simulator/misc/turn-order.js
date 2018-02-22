@@ -5,7 +5,8 @@ const common = require('./../../common');
 
 let battle;
 
-describe('Mega Evolution', function () {
+// @nocommit
+false && describe('Mega Evolution', function () {
 	afterEach(function () {
 		battle.destroy();
 	});
@@ -63,7 +64,8 @@ describe('Mega Evolution', function () {
 	});
 });
 
-describe('Mega Evolution [Gen 6]', function () {
+// @nocommit
+false && describe('Mega Evolution [Gen 6]', function () {
 	afterEach(function () {
 		battle.destroy();
 	});
@@ -108,5 +110,18 @@ describe('Mega Evolution [Gen 6]', function () {
 		battle.p1.chooseMove('xscissor', null, true);
 		battle.commitDecisions();
 		assert.fainted(fastMega);
+	});
+});
+
+describe('speed ties', function () {
+	afterEach(function () {
+		battle.destroy();
+	});
+
+	it('should foobar', function () {
+		battle = common.gen(3).createBattle();
+		battle.join('p1', 'Guest 1', 1, [{species: 'Magikarp', moves: ['splash']}]);
+		battle.join('p2', 'Guest 2', 1, [{species: 'Magikarp', moves: ['splash']}]);
+		battle.commitDecisions();
 	});
 });
