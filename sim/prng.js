@@ -78,6 +78,10 @@ class PRNG {
 		return result;
 	}
 
+	/**
+	 * @param {Array} items
+	 * @return {Array}
+	 */
 	shuffled(items) {
 		const remainingItems = items.slice();
 		const shuffledItems = [];
