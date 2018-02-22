@@ -21,7 +21,7 @@ function shuffle(items, prng) {
 		shuffledItems.push(items[1 - index]);
 		return shuffledItems;
 	}
-	return items;
+	return items.slice();
 }
 
 describe("shuffle", function () {
@@ -31,6 +31,11 @@ describe("shuffle", function () {
 			const prng = new PRNG([0, 0, 0, 0]);
 			const output = shuffle(input, prng);
 			assert.deepStrictEqual(output, []);
+		});
+		it("should return a new array object", function () {
+			const prng = new PRNG([0, 0, 0, 0]);
+			const output = shuffle(input, prng);
+			assert.notStrictEqual(output, input);
 		});
 	});
 	describe("single-item input", function () {
