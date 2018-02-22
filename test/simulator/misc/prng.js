@@ -1,7 +1,7 @@
 'use strict';
 
-const assert = require('./../../assert');
-const PRNG = require('./../../../sim/prng');
+const assert = require('../../assert');
+const PRNG = require('../../../sim/prng');
 
 describe("shuffle", function () {
 	describe("empty input", function () {

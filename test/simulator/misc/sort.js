@@ -1,43 +1,12 @@
 'use strict';
 
-const assert = require('./../../assert');
+const assert = require('../../assert');
+const sorted = require('../../../lib/sort').sorted;
 
 function compareNumbers(x, y) {
 	if (x < y) return -1;
 	if (x > y) return 1;
 	return 0;
-}
-
-function groupAdjacent(items, itemsEqual) {
-	const groups = [];
-	for (const item of items) {
-		if (groups.length > 0 && itemsEqual(item, groups[groups.length - 1][0])) {
-			groups[groups.length - 1].push(item);
-		} else {
-			groups.push([item]);
-		}
-	}
-	return groups;
-}
-
-// @nocommit STOLEN
-function sortStable(array, compare) {
-var array2 = array.map(function(v, i) { return { i: i, v: v } });
-array2.sort(function(a, b) {
-  var r = compare(a.v, b.v);
-  return r == 0 ? a.i - b.i : r;
-});
-return array2.map(function(v) { return v.v });
-}
-
-function sorted(items, getKey, compareKeys) {
-	// @nocommit test that original is not mutated
-	//const sortedItems = items;
-	//sortedItems.sort((x, y) => {
-	const sortedItems = sortStable(items, (x, y) => {
-		return compareKeys(getKey(x), getKey(y));
-	});
-	return groupAdjacent(sortedItems, (x, y) => compareKeys(getKey(x), getKey(y)) === 0);
 }
 
 function flatten(itemGroups) {
