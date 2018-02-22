@@ -131,7 +131,13 @@ describe('speed ties', function () {
 				case '|move|p1a: Magikarp|Splash|p1a: Magikarp':
 					turnOrder.push('p1a');
 					break;
+				case '|move|p1b: Magikarp|Splash|p1b: Magikarp':
+					turnOrder.push('p1b');
+					break;
 				case '|move|p2a: Magikarp|Splash|p2a: Magikarp':
+					turnOrder.push('p2a');
+					break;
+				case '|move|p2b: Magikarp|Splash|p2b: Magikarp':
 					turnOrder.push('p2a');
 					break;
 				default:
@@ -153,7 +159,7 @@ describe('speed ties', function () {
 		return histogram;
 	}
 
-	it('should cause either user to move first', function () {
+	it('should cause each user to have a 50% chance of moving first or second', function () {
 		const p1Team = [{species: 'Magikarp', moves: ['splash']}];
 		const p2Team = [{species: 'Magikarp', moves: ['splash']}];
 		const turnOrderSamples = [];
@@ -167,9 +173,30 @@ describe('speed ties', function () {
 			turnOrderSamples.push(turnOrder.join(','));
 		}
 		const turnOrderHistogram = getTurnOrderHistogram(turnOrderSamples);
-		assert(turnOrderHistogram.get('p1a,p2a') >= 45, 'p1a should move before p2b ~50% of the time');
-		assert(turnOrderHistogram.get('p1a,p2a') <= 55, 'p1a should move before p2b ~50% of the time');
-		assert(turnOrderHistogram.get('p2a,p1a') >= 45, 'p2a should move before p1b ~50% of the time');
-		assert(turnOrderHistogram.get('p2a,p1a') <= 55, 'p2a should move before p1b ~50% of the time');
+		assert.bounded(turnOrderHistogram.get('p1a,p2a'), [45, 55], 'p1a should move before p2b ~50% of the time');
+		assert.bounded(turnOrderHistogram.get('p2a,p1a'), [45, 55], 'p2a should move before p1b ~50% of the time');
+	});
+
+	it('should cause each user of three users to have a 33% chance of moving first, second, or third', function () {
+		const p1Team = [{species: 'Magikarp', moves: ['splash']}, {species: 'Magikarp', moves: ['splash']}];
+		const p2Team = [{species: 'Magikarp', moves: ['splash']}, {species: 'Gyarados', moves: ['splash']}];
+		const turnOrderSamples = [];
+		for (let i = 0; i < 100; ++i) {
+			const seed = [0, 0, 0, i];
+			battle = common.gen(3).createBattle({gameType: 'doubles', seed: seed});
+			battle.join('p1', 'Guest 1', 1, p1Team);
+			battle.join('p2', 'Guest 2', 1, p2Team);
+			battle.commitDecisions();
+			const turnOrder = getTurnOrder(battle);
+			// Ignore Gyarados.
+			//assert.strictEqual(turnOrder[0], 'p2b'); @nocommit
+			//turnOrder.shift(); @nocommit
+			turnOrderSamples.push(turnOrder.join(','));
+		}
+		const turnOrderHistogram = getTurnOrderHistogram(turnOrderSamples);
+		console.log(turnOrderHistogram);
+		assert.bounded(turnOrderHistogram.get('p1a,p1b,p2a') + turnOrderHistogram.get('p1a,p2a,p1b'), [28, 38], 'p1a should move first ~33% of the time');
+		assert.bounded(turnOrderHistogram.get('p1b,p1a,p2a') + turnOrderHistogram.get('p1b,p2a,p1a'), [28, 38], 'p1b should move first ~33% of the time');
+		assert.bounded(turnOrderHistogram.get('p2a,p1a,p1b') + turnOrderHistogram.get('p2a,p1a,p1b'), [28, 38], 'p2a should move first ~33% of the time');
 	});
 });
