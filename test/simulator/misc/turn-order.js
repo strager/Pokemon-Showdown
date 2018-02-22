@@ -153,17 +153,18 @@ describe('speed ties', function () {
 		return histogram;
 	}
 
-	it('should foobar', function () {
+	it('should cause either user to move first', function () {
+		const p1Team = [{species: 'Magikarp', moves: ['splash']}];
+		const p2Team = [{species: 'Magikarp', moves: ['splash']}];
 		const turnOrderSamples = [];
 		for (let i = 0; i < 100; ++i) {
 			const seed = [0, 0, 0, i];
 			battle = common.gen(3).createBattle({seed: seed});
-			battle.join('p1', 'Guest 1', 1, [{species: 'Magikarp', moves: ['splash']}]);
-			battle.join('p2', 'Guest 2', 1, [{species: 'Magikarp', moves: ['splash']}]);
+			battle.join('p1', 'Guest 1', 1, p1Team);
+			battle.join('p2', 'Guest 2', 1, p2Team);
 			battle.commitDecisions();
 			const turnOrder = getTurnOrder(battle);
 			turnOrderSamples.push(turnOrder.join(','));
-			//assert.deepStrictEqual(turnOrder, ['p1a', 'p2a']);
 		}
 		const turnOrderHistogram = getTurnOrderHistogram(turnOrderSamples);
 		assert(turnOrderHistogram.get('p1a,p2a') >= 45, 'p1a should move before p2b ~50% of the time');
