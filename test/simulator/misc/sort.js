@@ -20,10 +20,21 @@ function groupAdjacent(items, itemsEqual) {
 	return groups;
 }
 
+// @nocommit STOLEN
+function sortStable(array, compare) {
+var array2 = array.map(function(v, i) { return { i: i, v: v } });
+array2.sort(function(a, b) {
+  var r = compare(a.v, b.v);
+  return r == 0 ? a.i - b.i : r;
+});
+return array2.map(function(v) { return v.v });
+}
+
 function sorted(items, getKey, compareKeys) {
 	// @nocommit test that original is not mutated
-	const sortedItems = items;
-	sortedItems.sort((x, y) => {
+	//const sortedItems = items;
+	//sortedItems.sort((x, y) => {
+	const sortedItems = sortStable(items, (x, y) => {
 		return compareKeys(getKey(x), getKey(y));
 	});
 	return groupAdjacent(sortedItems, (x, y) => compareKeys(getKey(x), getKey(y)) === 0);
@@ -82,7 +93,7 @@ describe("sorted", function () {
 			it("should sort preserving input order", function () {
 				assert.deepStrictEqual(flatten(output), ['hello', 'harry']);
 			});
-			it("should sort by into one group containing both items", function () {
+			it("should sort into one group containing both items", function () {
 				assert.deepStrictEqual(output, [['hello', 'harry']]);
 			});
 		});
@@ -91,8 +102,29 @@ describe("sorted", function () {
 			it("should sort preserving input order", function () {
 				assert.deepStrictEqual(flatten(output), ['hello', 'harry']);
 			});
-			it("should sort by into one group containing both items", function () {
+			it("should sort into one group containing both items", function () {
 				assert.deepStrictEqual(output, [['hello', 'harry']]);
+			});
+		});
+	});
+	describe("a mix of similar and different items", function () {
+		const input = ['the', 'turtle', 'drinks', 'the', 'tea'];
+		describe("sort by initial char code", function () {
+			const output = sorted(input, (s) => s.charCodeAt(0), compareNumbers);
+			it("should sort preserving input order", function () {
+				assert.deepStrictEqual(flatten(output), ['drinks', 'the', 'turtle', 'the', 'tea']);
+			});
+			it("should sort into two groups", function () {
+				assert.deepStrictEqual(output, [['drinks'], ['the', 'turtle', 'the', 'tea']]);
+			});
+		});
+		describe("sort by string length", function () {
+			const output = sorted(input, (s) => s.length, compareNumbers);
+			it("should sort preserving input order", function () {
+				assert.deepStrictEqual(flatten(output), ['the', 'the', 'tea', 'turtle', 'drinks']);
+			});
+			it("should sort into one group containing both items", function () {
+				assert.deepStrictEqual(output, [['the', 'the', 'tea'], ['turtle', 'drinks']]);
 			});
 		});
 	});
