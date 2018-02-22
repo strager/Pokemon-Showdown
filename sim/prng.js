@@ -78,6 +78,17 @@ class PRNG {
 		return result;
 	}
 
+	shuffled(items) {
+		const remainingItems = items.slice();
+		const shuffledItems = [];
+		while (remainingItems.length > 0) {
+			const index = this.next(remainingItems.length);
+			shuffledItems.push(remainingItems[index]);
+			remainingItems.splice(index, 1);
+		}
+		return shuffledItems;
+	}
+
 	/**
 		The RNG is a Linear Congruential Generator (LCG) in the form: `x_{n + 1} = (a x_n + c) % m`
 

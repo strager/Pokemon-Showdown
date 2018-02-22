@@ -3,28 +3,17 @@
 const assert = require('./../../assert');
 const PRNG = require('./../../../sim/prng');
 
-function shuffle(items, prng) {
-	const remainingItems = items.slice();
-	const shuffledItems = [];
-	while (remainingItems.length > 0) {
-		const index = prng.next(remainingItems.length);
-		shuffledItems.push(remainingItems[index]);
-		remainingItems.splice(index, 1);
-	}
-	return shuffledItems;
-}
-
 describe("shuffle", function () {
 	describe("empty input", function () {
 		const input = [];
 		it("should shuffle to an empty array", function () {
 			const prng = new PRNG([0, 0, 0, 0]);
-			const output = shuffle(input, prng);
+			const output = prng.shuffled(input);
 			assert.deepStrictEqual(output, []);
 		});
 		it("should return a new array object", function () {
 			const prng = new PRNG([0, 0, 0, 0]);
-			const output = shuffle(input, prng);
+			const output = prng.shuffled(input);
 			assert.notStrictEqual(output, input);
 		});
 	});
@@ -32,7 +21,7 @@ describe("shuffle", function () {
 		const input = [42];
 		it("should shuffle to itself", function () {
 			const prng = new PRNG([0, 0, 0, 0]);
-			const output = shuffle(input, prng);
+			const output = prng.shuffled(input);
 			assert.deepStrictEqual(output, [42]);
 		});
 	});
@@ -43,7 +32,7 @@ describe("shuffle", function () {
 			let numberOfSameOrderSamples = 0;
 			let numberOfReverseOrderSamples = 0;
 			for (let i = 0; i < 1000; ++i) {
-				const output = shuffle(input, prng);
+				const output = prng.shuffled(input);
 				assert.strictEqual(output.length, 2);
 				if (output[0] === 42 && output[1] === 9001) {
 					numberOfSameOrderSamples += 1;
@@ -64,7 +53,7 @@ describe("shuffle", function () {
 			const prng = new PRNG([0, 0, 0, 0]);
 			const samples = [];
 			for (let i = 0; i < 1000; ++i) {
-				const output = shuffle(input, prng);
+				const output = prng.shuffled(input);
 				assert.strictEqual(output.length, 3);
 				samples.push(output);
 				assert.deepStrictEqual(output.slice().sort(), ['a', 'b', 'c'], 'the shuffled array should be a permutation of the input');
@@ -91,7 +80,7 @@ describe("shuffle", function () {
 		it("should not mutate the input", function () {
 			const input = [1, 3, 'x', 2, 'asdf', 'qwerty', null, undefined];
 			const prng = new PRNG([0, 0, 0, 0]);
-			const output = shuffle(input, prng);
+			const output = prng.shuffled(input);
 			assert.deepStrictEqual(input, [1, 3, 'x', 2, 'asdf', 'qwerty', null, undefined]);
 		});
 	});
