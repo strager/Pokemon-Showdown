@@ -118,10 +118,57 @@ describe('speed ties', function () {
 		battle.destroy();
 	});
 
+	function getTurnOrder(battle) {
+		const turn1Index = battle.log.indexOf('|turn|1');
+		assert.notEqual(turn1Index, -1);
+		const turn2Index = battle.log.indexOf('|turn|2');
+		assert.notEqual(turn2Index, -1);
+		const turn1Log = battle.log.slice(turn1Index + 1, turn2Index);
+
+		const turnOrder = [];
+		for (const logEntry of turn1Log) {
+			switch (logEntry) {
+				case '|move|p1a: Magikarp|Splash|p1a: Magikarp':
+					turnOrder.push('p1a');
+					break;
+				case '|move|p2a: Magikarp|Splash|p2a: Magikarp':
+					turnOrder.push('p2a');
+					break;
+				default:
+					// Ignore unknown log entries.
+					break;
+			}
+		}
+		return turnOrder;
+	}
+
+	function getTurnOrderHistogram(turnOrderSamples) {
+		const histogram = new Map();
+		for (const sample of turnOrderSamples) {
+			if (!histogram.has(sample)) {
+				histogram.set(sample, 0);
+			}
+			histogram.set(sample, histogram.get(sample) + 1);
+		}
+		return histogram;
+	}
+
 	it('should foobar', function () {
-		battle = common.gen(3).createBattle();
-		battle.join('p1', 'Guest 1', 1, [{species: 'Magikarp', moves: ['splash']}]);
-		battle.join('p2', 'Guest 2', 1, [{species: 'Magikarp', moves: ['splash']}]);
-		battle.commitDecisions();
+		const turnOrderSamples = [];
+		for (let i = 0; i < 100; ++i) {
+			const seed = [0, 0, 0, i];
+			battle = common.gen(3).createBattle({seed: seed});
+			battle.join('p1', 'Guest 1', 1, [{species: 'Magikarp', moves: ['splash']}]);
+			battle.join('p2', 'Guest 2', 1, [{species: 'Magikarp', moves: ['splash']}]);
+			battle.commitDecisions();
+			const turnOrder = getTurnOrder(battle);
+			turnOrderSamples.push(turnOrder.join(','));
+			//assert.deepStrictEqual(turnOrder, ['p1a', 'p2a']);
+		}
+		const turnOrderHistogram = getTurnOrderHistogram(turnOrderSamples);
+		assert(turnOrderHistogram.get('p1a,p2a') >= 45, 'p1a should move before p2b ~50% of the time');
+		assert(turnOrderHistogram.get('p1a,p2a') <= 55, 'p1a should move before p2b ~50% of the time');
+		assert(turnOrderHistogram.get('p2a,p1a') >= 45, 'p2a should move before p1b ~50% of the time');
+		assert(turnOrderHistogram.get('p2a,p1a') <= 55, 'p2a should move before p1b ~50% of the time');
 	});
 });
