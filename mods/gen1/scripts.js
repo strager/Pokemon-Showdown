@@ -573,7 +573,7 @@ exports.BattleScripts = {
 				// If a move that was not fire-type would exist on Gen 1, it could burn a Pokémon.
 				if (!(secondary.status && ['par', 'brn', 'frz'].includes(secondary.status) && target && target.hasType(move.type))) {
 					let effectChance = Math.ceil(secondary.chance * 256 / 100);
-					if (typeof secondary.chance === 'undefined' || this.random(256) < effectChance) {
+					if (typeof secondary.chance === 'undefined' || this.flipCoin(effectChance, 256)) {
 						this.moveHit(target, pokemon, move, secondary, true, isSelf);
 					}
 				}
