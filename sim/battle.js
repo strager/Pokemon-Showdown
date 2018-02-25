@@ -2689,17 +2689,14 @@ class Battle extends Dex.ModdedDex {
 	/**
 	 * @param {ReadonlyArray<T>} items
 	 * @return {Array<T>}
-	 * @template T
+	 * @template T extends AnyObject
 	 */
 	sortedByPriority(items) {
 		return array.sortedWithTieBreaker(items, Battle.comparePriority, (group) => this.prng.shuffled(group));
 	}
 
 	sortQueue() {
-		// @nocommit needs to change?
-		// @nocommit is it safe to not mutate the original array?
 		this.queue = this.sortedByPriority(this.queue);
-		//this.queue.sort((a, b) => Battle.comparePriority(a, b));
 	}
 
 	/**
