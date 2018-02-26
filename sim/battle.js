@@ -591,7 +591,21 @@ class Battle extends Dex.ModdedDex {
 	residualEvent(eventid, relayVar) {
 		let statuses = this.getRelevantEffectsInner(this, 'on' + eventid, null, null, false, true, 'duration');
 		// @nocommit needs to change?
-		statuses.sort((a, b) => Battle.comparePriority(a, b));
+		if (statuses.length >= 2) {
+			//console.trace(statuses.map(({priority, subPriority, speed, order}) => ({priority, subPriority, speed, order})));
+			//console.log(statuses);
+		}
+		statuses = array.sortedStable(statuses, Battle.comparePriority);
+		statuses.reverse();
+		/*
+		statuses.sort((a, b) => {
+			const p = Battle.comparePriority(a, b);
+			if (p === 0) {
+				return 0;
+			}
+			return p;
+		});
+		*/
 		while (statuses.length) {
 			let statusObj = statuses[0];
 			statuses.shift();

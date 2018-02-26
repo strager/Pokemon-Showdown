@@ -225,7 +225,8 @@ describe('speed ties', function () {
 			assert.atLeast(p1TailwindEndIndex, 0);
 			const p2TailwindEndIndex = battle.log.indexOf('|-sideend|p2: Guest 2|move: Tailwind');
 			assert.atLeast(p2TailwindEndIndex, 0);
-			const firstTailwindEndPlayer = p1TailwindStartIndex < p2TailwindStartIndex ? 'p1' : 'p2';
+			const firstTailwindEndPlayer = p1TailwindEndIndex < p2TailwindEndIndex ? 'p1' : 'p2';
+			console.log(battle.log.filter((e) => /Tailwind/.test(e)));
 
 			assert.strictEqual(firstTailwindPlayer, firstTailwindEndPlayer);
 		}
