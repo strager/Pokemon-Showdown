@@ -197,9 +197,15 @@ describe('speed ties', function () {
 		assert.bounded(turnOrderHistogram.get('p2a,p1a,p1b') + turnOrderHistogram.get('p2a,p1a,p1b'), [28, 38], 'p2a should move first ~33% of the time');
 	});
 
-	it('@nocommit', function () {
+	// @nocommit How should this behave?
+	// Idea 1: Random (lame!)
+	// Idea 2: First to enter Tailwind is first to leave Tailwind
+	// Idea 3: Tailwind ends for p1 first, then p2
+	/*
+	it('@nocommit 1', function () {
 		for (let i = 0; i < 10; ++i) {
 			const seed = [0, 0, 0, i];
+			console.log(seed);
 
 			battle = common.gen(4).createBattle({seed: seed});
 			const p1 = battle.join('p1', 'Guest 1', 1, [{species: "Smeargle", ability: 'technician', moves: ['tailwind', 'splash']}]);
@@ -231,4 +237,5 @@ describe('speed ties', function () {
 			assert.strictEqual(firstTailwindPlayer, firstTailwindEndPlayer);
 		}
 	});
+	*/
 });
