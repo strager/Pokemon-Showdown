@@ -196,4 +196,38 @@ describe('speed ties', function () {
 		assert.bounded(turnOrderHistogram.get('p1b,p1a,p2a') + turnOrderHistogram.get('p1b,p2a,p1a'), [28, 38], 'p1b should move first ~33% of the time');
 		assert.bounded(turnOrderHistogram.get('p2a,p1a,p1b') + turnOrderHistogram.get('p2a,p1a,p1b'), [28, 38], 'p2a should move first ~33% of the time');
 	});
+
+	it('@nocommit', function () {
+		for (let i = 0; i < 10; ++i) {
+			const seed = [0, 0, 0, i];
+
+			battle = common.gen(4).createBattle({seed: seed});
+			const p1 = battle.join('p1', 'Guest 1', 1, [{species: "Smeargle", ability: 'technician', moves: ['tailwind', 'splash']}]);
+			const p2 = battle.join('p2', 'Guest 2', 1, [{species: "Smeargle", ability: 'technician', moves: ['tailwind', 'splash']}]);
+
+			p1.chooseMove('tailwind');
+			p2.chooseMove('tailwind');
+			battle.commitDecisions();
+			const p1TailwindStartIndex = battle.log.indexOf('|move|p1a: Smeargle|Tailwind|p1a: Smeargle');
+			assert.atLeast(p1TailwindStartIndex, 0);
+			const p2TailwindStartIndex = battle.log.indexOf('|move|p2a: Smeargle|Tailwind|p2a: Smeargle');
+			assert.atLeast(p2TailwindStartIndex, 0);
+			const firstTailwindPlayer = p1TailwindStartIndex < p2TailwindStartIndex ? 'p1' : 'p2';
+
+			p1.chooseMove('splash');
+			p2.chooseMove('splash');
+			battle.commitDecisions();
+
+			p1.chooseMove('splash');
+			p2.chooseMove('splash');
+			battle.commitDecisions();
+			const p1TailwindEndIndex = battle.log.indexOf('|-sideend|p1: Guest 1|move: Tailwind');
+			assert.atLeast(p1TailwindEndIndex, 0);
+			const p2TailwindEndIndex = battle.log.indexOf('|-sideend|p2: Guest 2|move: Tailwind');
+			assert.atLeast(p2TailwindEndIndex, 0);
+			const firstTailwindEndPlayer = p1TailwindStartIndex < p2TailwindStartIndex ? 'p1' : 'p2';
+
+			assert.strictEqual(firstTailwindPlayer, firstTailwindEndPlayer);
+		}
+	});
 });
