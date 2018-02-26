@@ -811,9 +811,10 @@ class Battle extends Dex.ModdedDex {
 		if (!target) target = this;
 		let statuses = this.getRelevantEffects(target, 'on' + eventid, 'onSource' + eventid, source);
 		if (fastExit) {
+			// @nocommit needs to change to stable?
 			statuses.sort(Battle.compareRedirectOrder);
 		} else {
-			// @nocommit needs to change?
+			// @nocommit needs to change to break ties?
 			statuses.sort((a, b) => Battle.comparePriority(a, b));
 		}
 		let hasRelayVar = true;
