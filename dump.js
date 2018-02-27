@@ -27,7 +27,7 @@ function getAllEvents() {
 }
 
 function findCollisions(eventName) {
-	const eventHandlerRegExp = new RegExp(`.*${quoteRegExp(eventName)}$`, '');
+	const eventHandlerRegExp = new RegExp(`^on(?:Ally|Any|Foe|Source|)${quoteRegExp(eventName)}$`, '');
 
 	const effectsWithHandlerForEvent = [];
 	for (const effectGroup of Object.values(dex.data)) {
